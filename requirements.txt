@@ -1,3 +1,4 @@
+attrdict
 numpy
 opencv-python
 protobuf
