@@ -74,14 +74,26 @@ def show_range_image(frame, lidar_name):
     
     # step 4 : map the range channel onto an 8-bit scale and make sure that the full range of values is appropriately considered
     ri_range = ri[:,:,0]
+    
+    # focus on +/- 90° around the image cente
+    deg90 = int(ri_range.shape[1] / 4)
+    ri_center = int(ri_range.shape[1] / 2)
+    ri_range = ri_range[:,ri_center-deg90:ri_center+deg90]
+    
     ri_range = ri_range * 255 / (np.amax(ri_range) - np.amin(ri_range)) # normalize
     img_range = ri_range.astype(np.uint8)
     
     # step 5 : map the intensity channel onto an 8-bit scale and normalize with the difference between the 1- and 99-percentile to mitigate the influence of outliers
     ri_intensity = ri[:,:,1]
+    
+    # focus on +/- 90° around the image center
+    deg90 = int(ri_intensity.shape[1] / 4)
+    ri_center = int(ri_intensity.shape[1] / 2)
+    ri_intensity = ri_intensity[:,ri_center-deg90:ri_center+deg90]
+    
     ri_intensity = np.amax(ri_intensity)/2 * ri_intensity * 255 / (np.amax(ri_intensity) - np.amin(ri_intensity))
     img_intensity = ri_intensity.astype(np.uint8)
-
+    
     # step 6 : stack the range and intensity image vertically using np.vstack and convert the result to an unsigned 8-bit integer
     img_range_intensity = np.vstack((img_range, img_intensity))
 
