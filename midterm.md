@@ -16,11 +16,11 @@
 #### (7) Window, wheel
 ![9](img/veh9.png)
 #### (8) Side mirror, wheel, bumper
-![11](img/veh10.png)
+![11](img/veh11.png)
 #### (9) Side mirror, wheel, trailer
-![11](img/veh10.png)
+![12](img/veh12.png)
 #### (10) Wind shield
-![11](img/veh10.png)
+![13](img/veh13.png)
 
 I could identify the **wheels**, **bumpers**, **windows** and **side mirrors** of vehicles from the above images.
 They might be used as a feature for detecting objects.
