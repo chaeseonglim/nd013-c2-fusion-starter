@@ -132,6 +132,8 @@ def load_configs(model_name='fpn_resnet', configs=None):
     configs.output_width = 608 # width of result image (height may vary)
     configs.obj_colors = [[0, 255, 255], [0, 0, 255], [255, 0, 0]] # 'Pedestrian': 0, 'Car': 1, 'Cyclist': 2
 
+    configs.min_iou = 0.5
+
     return configs
 
 
@@ -213,6 +215,7 @@ def detect_objects(input_bev_maps, model, configs):
 
             detections = post_processing(detections, configs)
 
+            detections = detections[0][1]
             #######
             ####### ID_S3_EX1-5 END #######
 
@@ -225,27 +228,26 @@ def detect_objects(input_bev_maps, model, configs):
     objects = []
 
     ## step 1 : check whether there are any detections
-    if detections:
+    if len(detections) > 0:
 
         ## step 2 : loop over all detections
-        for detection in detections:
+        for det in detections:
 
             ## step 3 : perform the conversion using the limits for x, y and z set in the configs structure
-            for det in detection[1]:
-                _score, _x, _y, _z, _h, _w, _l, _yaw = det
-                _yaw = -_yaw
-                bound_size_x = configs.lim_x[1] - configs.lim_x[0]
-                bound_size_y = configs.lim_y[1] - configs.lim_y[0]
-                bound_size_z = configs.lim_z[1] - configs.lim_z[0]
-                x = _y / configs.bev_height * bound_size_x + configs.lim_x[0]
-                y = _x / configs.bev_width * bound_size_y + configs.lim_y[0]
-                z = _z + configs.lim_z[0]
-                w = _w / configs.bev_width * bound_size_y
-                l = _l / configs.bev_height * bound_size_x
-                h = _h
+            _score, _x, _y, _z, _h, _w, _l, _yaw = det
+            bound_size_x = configs.lim_x[1] - configs.lim_x[0]
+            bound_size_y = configs.lim_y[1] - configs.lim_y[0]
+            bound_size_z = configs.lim_z[1] - configs.lim_z[0]
+            x = _y / configs.bev_height * bound_size_x + configs.lim_x[0]
+            y = _x / configs.bev_width * bound_size_y + configs.lim_y[0]
+            z = _z + configs.lim_z[0]
+            w = _w / configs.bev_width * bound_size_y
+            l = _l / configs.bev_height * bound_size_x
+            h = _h
+            _yaw = -_yaw
 
-                ## step 4 : append the current object to the 'objects' array
-                objects.append([ 1, x, y, z, h, w, l, _yaw])
+            ## step 4 : append the current object to the 'objects' array
+            objects.append([ 1, x, y, z, h, w, l, _yaw])
 
     #######
     ####### ID_S3_EX2 START #######
